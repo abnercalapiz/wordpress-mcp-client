@@ -192,20 +192,24 @@ export class WordPressMCPMultiSite {
    * Check health of all sites
    */
   async healthCheck(): Promise<Array<{ site: string; status: 'healthy' | 'error' | 'timeout'; message?: string }>> {
-    return this.executeOnAll(async (client, siteId) => {
+    const results = await this.executeOnAll(async (client, siteId) => {
       try {
-        const discovery = await client.discovery();
+        await client.discovery();
         return {
-          site: siteId,
           status: 'healthy' as const,
         };
       } catch (error: any) {
         return {
-          site: siteId,
-          status: error.code === 'TIMEOUT' ? 'timeout' : 'error' as const,
+          status: error.code === 'TIMEOUT' ? ('timeout' as const) : ('error' as const),
           message: error.message,
         };
       }
     });
+
+    return results.map(r => ({
+      site: r.site,
+      status: r.result?.status || 'error' as const,
+      message: r.result?.message || r.error,
+    }));
   }
 }

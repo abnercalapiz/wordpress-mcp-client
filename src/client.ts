@@ -100,9 +100,9 @@ export class WordPressMCPClient {
       timeout: this.config.timeout,
       headers: {
         ...this.config.headers,
-        ...options?.headers,
+        ...(options?.headers as Record<string, string>),
       },
-    });
+    } as any);
   }
 
   /**

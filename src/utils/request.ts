@@ -1,4 +1,5 @@
-import fetch, { RequestInit } from 'node-fetch';
+import fetch from 'node-fetch';
+import type { RequestInit } from 'node-fetch';
 import { WordPressMCPError, NetworkError, TimeoutError } from './errors';
 
 export interface RequestOptions extends RequestInit {
@@ -21,7 +22,7 @@ export async function makeRequest<T>(
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': '@abnerjezweb/wordpress-mcp-client',
-        ...fetchOptions.headers,
+        ...(fetchOptions.headers as Record<string, string>),
       },
     });
 
