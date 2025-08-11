@@ -1,0 +1,57 @@
+{
+  "name": "WordPress LLM Ready MCP Server",
+  "version": "1.0.2",
+  "description": "Direct connection to WordPress site with LLM Ready plugin",
+  "type": "http",
+  "config": {
+    "baseUrl": "https://your-domain.com/wp-json/llmr/mcp/v1",
+    "endpoints": {
+      "discovery": {
+        "path": "/discovery",
+        "method": "GET",
+        "description": "Get available endpoints and capabilities"
+      },
+      "business": {
+        "path": "/business",
+        "method": "GET",
+        "description": "Get business information and hours"
+      },
+      "contact": {
+        "path": "/contact",
+        "method": "GET",
+        "description": "Get contact information"
+      },
+      "services": {
+        "path": "/services",
+        "method": "GET",
+        "description": "Get services/products list"
+      },
+      "search": {
+        "path": "/search",
+        "method": "POST",
+        "description": "Search content",
+        "parameters": {
+          "query": {
+            "type": "string",
+            "required": true,
+            "description": "Search query"
+          },
+          "per_page": {
+            "type": "integer",
+            "default": 10,
+            "description": "Results per page"
+          },
+          "post_type": {
+            "type": "string",
+            "default": "any",
+            "description": "Post type to search"
+          }
+        }
+      }
+    },
+    "authentication": {
+      "type": "none",
+      "description": "No authentication required - public endpoints"
+    }
+  }
+}

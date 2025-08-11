@@ -1,0 +1,71 @@
+{
+  "name": "wordpress-search",
+  "description": "Search WordPress content using LLM Ready plugin",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "search_content",
+      "description": "Search for content on the WordPress site",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query"
+          },
+          "per_page": {
+            "type": "number",
+            "description": "Number of results to return",
+            "default": 10
+          },
+          "post_type": {
+            "type": "string",
+            "description": "Type of content to search",
+            "enum": ["any", "post", "page"],
+            "default": "any"
+          }
+        },
+        "required": ["query"]
+      },
+      "handler": {
+        "type": "http",
+        "method": "POST",
+        "url": "https://your-domain.com/wp-json/llmr/mcp/v1/search",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "query": "{{query}}",
+          "per_page": "{{per_page}}",
+          "post_type": "{{post_type}}"
+        }
+      }
+    },
+    {
+      "name": "get_business_info",
+      "description": "Get business information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handler": {
+        "type": "http",
+        "method": "GET",
+        "url": "https://your-domain.com/wp-json/llmr/mcp/v1/business"
+      }
+    },
+    {
+      "name": "get_services",
+      "description": "Get list of services/products",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handler": {
+        "type": "http",
+        "method": "GET",
+        "url": "https://your-domain.com/wp-json/llmr/mcp/v1/services"
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "wordpress_mcp": {
+    "base_url": "https://your-domain.com/wp-json/llmr/mcp/v1",
+    "endpoints": [
+      {
+        "name": "discovery",
+        "url": "/discovery",
+        "method": "GET"
+      },
+      {
+        "name": "business",
+        "url": "/business",
+        "method": "GET"
+      },
+      {
+        "name": "contact",
+        "url": "/contact",
+        "method": "GET"
+      },
+      {
+        "name": "services",
+        "url": "/services",
+        "method": "GET"
+      },
+      {
+        "name": "search",
+        "url": "/search",
+        "method": "POST",
+        "body": {
+          "query": "search term",
+          "per_page": 10
+        }
+      }
+    ]
+  }
+}

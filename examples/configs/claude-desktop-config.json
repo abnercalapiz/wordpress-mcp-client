@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "wordpress-site": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch@latest"
+      ],
+      "env": {
+        "FETCH_CONFIG": {
+          "wordpress": {
+            "baseUrl": "https://your-domain.com/wp-json/llmr/mcp/v1",
+            "endpoints": {
+              "discovery": "/discovery",
+              "business": "/business",
+              "contact": "/contact",
+              "services": "/services",
+              "search": {
+                "path": "/search",
+                "method": "POST"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

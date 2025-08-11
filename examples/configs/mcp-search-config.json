@@ -1,0 +1,103 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "WordPress LLM Ready MCP API",
+    "version": "1.0.2"
+  },
+  "servers": [
+    {
+      "url": "https://your-domain.com/wp-json/llmr/mcp/v1"
+    }
+  ],
+  "paths": {
+    "/search": {
+      "post": {
+        "summary": "Search WordPress content",
+        "description": "Search for content across your WordPress site",
+        "operationId": "searchContent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "Search query string",
+                    "example": "AI tools"
+                  },
+                  "per_page": {
+                    "type": "integer",
+                    "description": "Number of results per page",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "post_type": {
+                    "type": "string",
+                    "description": "Post type to search",
+                    "default": "any",
+                    "enum": ["any", "post", "page"]
+                  }
+                }
+              },
+              "examples": {
+                "basic": {
+                  "value": {
+                    "query": "WordPress SEO"
+                  }
+                },
+                "advanced": {
+                  "value": {
+                    "query": "AI integration",
+                    "per_page": 5,
+                    "post_type": "post"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "excerpt": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
