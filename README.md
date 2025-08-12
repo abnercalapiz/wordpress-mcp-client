@@ -155,6 +155,15 @@ mcp-site add https://yoursite.com --clients claude roo --name "My Site"
 mcp-site add https://yoursite.com --id mysite --name "My Site"
 ```
 
+### 🔧 Built-in MCP Server
+
+The npm package includes a built-in MCP server that both Claude Desktop and Roo Code can use directly. When you run `mcp-site add`, it automatically configures your chosen MCP client to use this server.
+
+**Supported MCP Clients:**
+- ✅ Claude Desktop (Anthropic's desktop app)
+- ✅ Roo Code (VS Code extension)
+- ✅ Custom MCP clients
+
 #### How to Remove a Site
 
 First, see what sites you have:
@@ -234,7 +243,9 @@ See the [Auto-Add Documentation](./docs/MCP_AUTO_ADD.md) for complete technical 
 ### Setup Guides
 
 - [MCP Client Setup Guide](./MCP_CLIENT_SETUP_GUIDE.md) - Detailed setup instructions for various MCP clients
+- [Roo Code Setup Guide](./docs/ROO_CODE_SETUP.md) - Specific guide for VS Code Roo Code extension
 - [Auto-Add Documentation](./docs/MCP_AUTO_ADD.md) - CLI tool for automatic site configuration
+- [MCP Server Documentation](./docs/MCP_SERVER.md) - Built-in MCP server details
 - [API Documentation](./docs/API.md) - Complete API reference
 - [Examples](./docs/EXAMPLES.md) - Code examples and use cases
 - [Troubleshooting](./docs/TROUBLESHOOTING.md) - Common issues and solutions
@@ -435,9 +446,16 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-**Version**: 1.0.7  
+**Version**: 1.0.8  
 **Author**: Jezweb  
 **Website**: [https://www.jezweb.com.au/](https://www.jezweb.com.au/)
+
+## What's New in v1.0.8
+
+- 🚀 **Built-in MCP Server** - No more external dependencies! Works out of the box with Claude Desktop and Roo Code
+- 🎯 **Roo Code Support** - Full support for VS Code's Roo Code extension with automatic configuration
+- 🔧 **Fixed Claude Desktop Connection** - Resolved "Could not connect to MCP server" errors
+- 📦 **Simplified Setup** - Just run `mcp-site add` and it works!
 
 ## Changelog
 

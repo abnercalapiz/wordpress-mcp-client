@@ -1,0 +1,178 @@
+#!/usr/bin/env node
+/**
+ * WordPress MCP Server for Roo Code
+ * HTTP-based MCP server for VS Code extensions
+ */
+
+const http = require('http');
+const https = require('https');
+const url = require('url');
+
+// Get configuration from command line or environment
+const PORT = process.env.PORT || process.argv[2] || 3000;
+const SITE_URL = process.env.WORDPRESS_SITE_URL || process.argv[3] || process.argv[2];
+
+if (!SITE_URL || SITE_URL.match(/^\d+$/)) {
+  console.error('Error: No WordPress site URL provided');
+  console.error('Usage: wordpress-mcp-server-roo [port] <site-url>');
+  console.error('   or: wordpress-mcp-server-roo <site-url>');
+  process.exit(1);
+}
+
+// Parse port if provided
+const port = SITE_URL.match(/^\d+$/) ? parseInt(SITE_URL) : parseInt(PORT);
+const siteUrl = SITE_URL.match(/^\d+$/) ? process.argv[3] : SITE_URL;
+
+// Ensure HTTPS and remove trailing slash
+const baseUrl = siteUrl.replace(/\/$/, '').replace(/^http:/, 'https:');
+const apiBase = `${baseUrl}/wp-json/llmr/mcp/v1`;
+
+console.log(`Starting WordPress MCP Server for Roo Code`);
+console.log(`Site: ${baseUrl}`);
+console.log(`Port: ${port}`);
+
+// Make HTTP request to WordPress
+function makeWordPressRequest(endpoint, method = 'GET', data = null) {
+  return new Promise((resolve, reject) => {
+    const requestUrl = new URL(`${apiBase}/${endpoint}`);
+    
+    const options = {
+      method: method,
+      headers: {
+        'User-Agent': 'WordPress-MCP-Server-Roo/1.0',
+        'Accept': 'application/json'
+      }
+    };
+
+    if (method === 'POST' && data) {
+      options.headers['Content-Type'] = 'application/json';
+    }
+
+    const req = https.request(requestUrl, options, (res) => {
+      let body = '';
+      
+      res.on('data', (chunk) => {
+        body += chunk;
+      });
+      
+      res.on('end', () => {
+        try {
+          const result = JSON.parse(body);
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(result);
+          } else {
+            reject(new Error(`HTTP ${res.statusCode}: ${result.message || res.statusMessage}`));
+          }
+        } catch (e) {
+          reject(new Error(`Failed to parse response: ${e.message}`));
+        }
+      });
+    });
+
+    req.on('error', reject);
+
+    if (method === 'POST' && data) {
+      req.write(JSON.stringify(data));
+    }
+
+    req.end();
+  });
+}
+
+// Create HTTP server for Roo Code
+const server = http.createServer(async (req, res) => {
+  // Enable CORS for VS Code
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  const parsedUrl = url.parse(req.url, true);
+  const pathname = parsedUrl.pathname;
+
+  try {
+    let result;
+    
+    // Route MCP endpoints
+    switch (pathname) {
+      case '/':
+      case '/discovery':
+        result = await makeWordPressRequest('discovery');
+        break;
+        
+      case '/business':
+        result = await makeWordPressRequest('business');
+        break;
+        
+      case '/contact':
+        result = await makeWordPressRequest('contact');
+        break;
+        
+      case '/services':
+        result = await makeWordPressRequest('services');
+        break;
+        
+      case '/search':
+        if (req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => body += chunk);
+          await new Promise(resolve => req.on('end', resolve));
+          
+          const searchData = JSON.parse(body);
+          result = await makeWordPressRequest('search', 'POST', searchData);
+        } else {
+          // GET request with query parameters
+          const query = parsedUrl.query.q || parsedUrl.query.query || '';
+          result = await makeWordPressRequest('search', 'POST', {
+            query: query,
+            per_page: parseInt(parsedUrl.query.per_page) || 10,
+            page: parseInt(parsedUrl.query.page) || 1
+          });
+        }
+        break;
+        
+      case '/health':
+        result = { status: 'ok', site: baseUrl };
+        break;
+        
+      default:
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Endpoint not found' }));
+        return;
+    }
+    
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(result));
+    
+  } catch (error) {
+    console.error('Error:', error);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: error.message }));
+  }
+});
+
+// Start server
+server.listen(port, () => {
+  console.log(`WordPress MCP Server running at http://localhost:${port}`);
+  console.log('Available endpoints:');
+  console.log(`  GET  http://localhost:${port}/discovery`);
+  console.log(`  GET  http://localhost:${port}/business`);
+  console.log(`  GET  http://localhost:${port}/contact`);
+  console.log(`  GET  http://localhost:${port}/services`);
+  console.log(`  POST http://localhost:${port}/search`);
+  console.log(`  GET  http://localhost:${port}/health`);
+});
+
+// Handle shutdown
+process.on('SIGINT', () => {
+  console.log('\nShutting down server...');
+  server.close(() => {
+    process.exit(0);
+  });
+});

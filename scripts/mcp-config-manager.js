@@ -130,30 +130,10 @@ class MCPConfigManager {
       config.mcpServers = {};
     }
 
-    // Add the new site
+    // Add the new site using the built-in MCP server
     config.mcpServers[`wordpress-${siteId}`] = {
       command: "npx",
-      args: ["-y", "@modelcontextprotocol/server-fetch@latest"],
-      env: {
-        FETCH_CONFIG: JSON.stringify({
-          [siteId]: {
-            baseUrl: `${siteUrl}/wp-json/llmr/mcp/v1`,
-            endpoints: {
-              discovery: "/discovery",
-              business: "/business",
-              contact: "/contact",
-              services: "/services",
-              search: {
-                path: "/search",
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                }
-              }
-            }
-          }
-        })
-      }
+      args: ["-y", "@abnerjezweb/wordpress-mcp-client", "serve", siteUrl]
     };
 
     return this.writeConfig(configPath, config);
@@ -171,24 +151,21 @@ class MCPConfigManager {
       config['roo.mcpServers'] = {};
     }
 
-    // Add the new site
+    // Generate a unique port for this site (based on site ID hash)
+    const port = 3000 + (siteId.split('').reduce((a, b) => a + b.charCodeAt(0), 0) % 1000);
+
+    // Add the new site with local server configuration
     config['roo.mcpServers'][`wordpress-${siteId}`] = {
-      type: "http",
-      config: {
-        baseUrl: `${siteUrl}/wp-json/llmr/mcp/v1`,
-        name: siteName,
-        endpoints: {
-          discovery: { path: "/discovery", method: "GET" },
-          business: { path: "/business", method: "GET" },
-          contact: { path: "/contact", method: "GET" },
-          services: { path: "/services", method: "GET" },
-          search: { 
-            path: "/search", 
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-          }
-        }
-      }
+      type: "stdio",
+      command: "npx",
+      args: [
+        "-y",
+        "@abnerjezweb/wordpress-mcp-client",
+        "serve",
+        siteUrl
+      ],
+      name: siteName,
+      description: `WordPress MCP connection to ${siteName}`
     };
 
     return this.writeConfig(configPath, config);
@@ -315,24 +292,53 @@ class MCPConfigManager {
       if (client === 'claude' && config.mcpServers) {
         Object.entries(config.mcpServers).forEach(([key, value]) => {
           if (key.startsWith('wordpress-')) {
-            const fetchConfig = JSON.parse(value.env.FETCH_CONFIG);
-            const siteConfig = Object.values(fetchConfig)[0];
-            sites.push({
-              id: key.replace('wordpress-', ''),
-              url: siteConfig.baseUrl.replace('/wp-json/llmr/mcp/v1', ''),
-              key
-            });
+            // Handle new format (direct URL in args)
+            if (value.args && value.args.includes('serve')) {
+              const urlIndex = value.args.indexOf('serve') + 1;
+              if (urlIndex < value.args.length) {
+                sites.push({
+                  id: key.replace('wordpress-', ''),
+                  url: value.args[urlIndex],
+                  key
+                });
+              }
+            }
+            // Handle old format (FETCH_CONFIG)
+            else if (value.env && value.env.FETCH_CONFIG) {
+              const fetchConfig = JSON.parse(value.env.FETCH_CONFIG);
+              const siteConfig = Object.values(fetchConfig)[0];
+              sites.push({
+                id: key.replace('wordpress-', ''),
+                url: siteConfig.baseUrl.replace('/wp-json/llmr/mcp/v1', ''),
+                key
+              });
+            }
           }
         });
       } else if (client === 'roo' && config['roo.mcpServers']) {
         Object.entries(config['roo.mcpServers']).forEach(([key, value]) => {
           if (key.startsWith('wordpress-')) {
-            sites.push({
-              id: key.replace('wordpress-', ''),
-              name: value.config.name,
-              url: value.config.baseUrl.replace('/wp-json/llmr/mcp/v1', ''),
-              key
-            });
+            // Handle new stdio format
+            if (value.type === 'stdio' && value.args) {
+              const urlIndex = value.args.indexOf('serve') + 1;
+              if (urlIndex < value.args.length) {
+                sites.push({
+                  id: key.replace('wordpress-', ''),
+                  name: value.name || 'WordPress Site',
+                  url: value.args[urlIndex],
+                  key
+                });
+              }
+            }
+            // Handle old HTTP format
+            else if (value.config && value.config.baseUrl) {
+              sites.push({
+                id: key.replace('wordpress-', ''),
+                name: value.config.name,
+                url: value.config.baseUrl.replace('/wp-json/llmr/mcp/v1', ''),
+                key
+              });
+            }
           }
         });
       }

@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] - 2024-12-12
+
+### Added
+- Built-in MCP server (`wordpress-mcp-server`) that Claude Desktop and Roo Code can use directly
+- Support for Roo Code (VS Code extension) with stdio-based MCP server
+- HTTP-based MCP server for Roo Code (`wordpress-mcp-server-roo`) as alternative option
+- Automatic configuration now uses the built-in server instead of non-existent packages
+- New binary entry points for MCP servers
+- Easy setup documentation for manual configuration
+- Comprehensive Roo Code setup guide
+
+### Fixed
+- Fixed "Could not connect to MCP server" error in Claude Desktop
+- Replaced dependency on non-existent @modelcontextprotocol/server-fetch package
+- Updated mcp-config-manager.js to use the built-in server for both Claude and Roo
+
+### Changed
+- `mcp-site add` now configures Claude Desktop to use `npx @abnerjezweb/wordpress-mcp-client serve <url>`
+- Roo Code configuration now uses stdio type with the same built-in server
+- Added bin directory to published npm package files
+- Updated list sites functionality to handle both old and new configuration formats for all clients
+- README now mentions support for both Claude Desktop and Roo Code
+
 ## [1.0.7] - 2024-12-12
 
 ### Fixed

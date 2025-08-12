@@ -1,6 +1,6 @@
 {
   "name": "@abnerjezweb/wordpress-mcp-client",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "JavaScript/TypeScript client for WordPress LLM Ready MCP endpoints",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -8,12 +8,15 @@
   "files": [
     "dist",
     "scripts",
+    "bin",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"
   ],
   "bin": {
-    "mcp-site": "./scripts/mcp-cli.js"
+    "mcp-site": "./scripts/mcp-cli.js",
+    "wordpress-mcp-server": "./bin/wordpress-mcp-server",
+    "wordpress-mcp-server-roo": "./bin/wordpress-mcp-server-roo"
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
@@ -28,7 +31,8 @@
     "mcp:list": "node scripts/mcp-cli.js list",
     "mcp:remove": "node scripts/mcp-cli.js remove",
     "mcp:validate": "node scripts/mcp-cli.js validate",
-    "mcp:interactive": "node scripts/mcp-cli.js interactive"
+    "mcp:interactive": "node scripts/mcp-cli.js interactive",
+    "serve": "node scripts/mcp-serve.js"
   },
   "keywords": [
     "wordpress",
