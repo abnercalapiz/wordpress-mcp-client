@@ -1,270 +1,248 @@
 #!/usr/bin/env node
 
-const MCPConfigManager = require('./mcp-config-manager');
 const { program } = require('commander');
 const chalk = require('chalk');
-const inquirer = require('inquirer');
 const { version } = require('../package.json');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
-const manager = new MCPConfigManager();
+// Configuration examples
+const CONFIG_EXAMPLES = {
+  claude: {
+    name: 'Claude Desktop',
+    configPath: {
+      darwin: '~/Library/Application Support/Claude/claude_desktop_config.json',
+      win32: '%APPDATA%\\Claude\\claude_desktop_config.json',
+      linux: '~/.config/claude/claude_desktop_config.json'
+    },
+    example: {
+      mcpServers: {
+        "wordpress-your-site": {
+          command: "node",
+          args: [
+            "/path/to/wordpress-mcp-client/bin/wordpress-mcp-server",
+            "https://your-wordpress-site.com"
+          ]
+        }
+      }
+    }
+  },
+  roo: {
+    name: 'Roo Code (VS Code)',
+    configPath: {
+      darwin: '~/Library/Application Support/Code/User/settings.json',
+      win32: '%APPDATA%\\Code\\User\\settings.json',
+      linux: '~/.config/Code/User/settings.json'
+    },
+    example: {
+      "roo.mcpServers": {
+        "wordpress-your-site": {
+          type: "stdio",
+          command: "node",
+          args: [
+            "/path/to/wordpress-mcp-client/bin/wordpress-mcp-server",
+            "https://your-wordpress-site.com"
+          ],
+          name: "Your WordPress Site",
+          description: "WordPress MCP connection"
+        }
+      }
+    }
+  }
+};
 
-// CLI configuration
 program
   .name('mcp-site')
-  .description('WordPress MCP Site Manager - Automatically add WordPress sites to MCP clients')
+  .description('WordPress MCP Manual Configuration Helper')
   .version(version);
 
-// Add site command
 program
-  .command('add <url>')
-  .description('Add a WordPress site to MCP client configurations')
-  .option('-c, --clients <clients...>', 'Target clients (claude, roo, custom)', ['claude'])
-  .option('-i, --id <id>', 'Custom site ID (auto-generated if not provided)')
-  .option('-n, --name <name>', 'Custom site name')
-  .option('--skip-validation', 'Skip site validation')
-  .option('--custom-path <path>', 'Path to custom config file')
-  .action(async (url, options) => {
-    try {
-      console.log(chalk.blue('\n🔧 WordPress MCP Site Manager\n'));
-
-      // If no specific clients provided, ask user
-      if (!options.clients || options.clients.length === 0) {
-        const { selectedClients } = await inquirer.prompt([
-          {
-            type: 'checkbox',
-            name: 'selectedClients',
-            message: 'Select MCP clients to add the site to:',
-            choices: [
-              { name: 'Claude Desktop', value: 'claude' },
-              { name: 'Roo Code (VS Code)', value: 'roo' },
-              { name: 'Custom Config File', value: 'custom' }
-            ],
-            default: ['claude']
-          }
-        ]);
-        options.clients = selectedClients;
-      }
-
-      // If custom client selected but no path provided, ask for it
-      if (options.clients.includes('custom') && !options.customPath) {
-        const { customPath } = await inquirer.prompt([
-          {
-            type: 'input',
-            name: 'customPath',
-            message: 'Enter path for custom config file:',
-            default: './mcp-sites.json'
-          }
-        ]);
-        options.customPath = customPath;
-      }
-
-      const result = await manager.addSite(url, options);
-
-      console.log(chalk.green('\n✅ Site added successfully!\n'));
-      console.log(chalk.white('Site Details:'));
-      console.log(chalk.gray('  ID:  '), result.siteId);
-      console.log(chalk.gray('  Name:'), result.siteName);
-      console.log(chalk.gray('  URL: '), result.url);
-
-      console.log(chalk.white('\nConfiguration Results:'));
-      Object.entries(result.results).forEach(([client, status]) => {
-        if (status.success) {
-          console.log(chalk.green(`  ✓ ${client}: ${status.path}`));
-        } else {
-          console.log(chalk.red(`  ✗ ${client}: ${status.error}`));
-        }
-      });
-
-      console.log(chalk.yellow('\n⚠️  Restart your MCP clients for changes to take effect.'));
-
-    } catch (error) {
-      console.error(chalk.red(`\n❌ Error: ${error.message}`));
-      process.exit(1);
-    }
+  .command('show-config [client]')
+  .description('Show manual configuration instructions')
+  .action((client) => {
+    showManualConfig(client);
   });
 
-// List sites command
 program
-  .command('list')
-  .description('List configured WordPress sites')
+  .command('generate <url>')
+  .description('Generate configuration JSON for a WordPress site')
+  .option('-n, --name <name>', 'Site name')
   .option('-c, --client <client>', 'Target client (claude, roo)', 'claude')
-  .action((options) => {
-    try {
-      console.log(chalk.blue(`\n📋 WordPress Sites in ${options.client}:\n`));
-
-      const sites = manager.listSites(options.client);
-
-      if (sites.length === 0) {
-        console.log(chalk.gray('No WordPress sites configured.'));
-      } else {
-        sites.forEach((site, index) => {
-          console.log(chalk.white(`${index + 1}. ${site.name || site.id}`));
-          console.log(chalk.gray(`   ID:  ${site.id}`));
-          console.log(chalk.gray(`   URL: ${site.url}`));
-          console.log();
-        });
-      }
-    } catch (error) {
-      console.error(chalk.red(`\n❌ Error: ${error.message}`));
-      process.exit(1);
-    }
+  .action((url, options) => {
+    generateConfig(url, options);
   });
 
-// Remove site command
 program
-  .command('remove <siteId>')
-  .description('Remove a WordPress site from configuration')
-  .option('-c, --client <client>', 'Target client (claude, roo)', 'claude')
-  .action(async (siteId, options) => {
-    try {
-      const { confirm } = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'confirm',
-          message: `Remove site "${siteId}" from ${options.client}?`,
-          default: false
-        }
-      ]);
-
-      if (!confirm) {
-        console.log(chalk.yellow('Cancelled.'));
-        return;
-      }
-
-      const success = manager.removeSite(siteId, options.client);
-
-      if (success) {
-        console.log(chalk.green(`\n✅ Site "${siteId}" removed from ${options.client}.`));
-        console.log(chalk.yellow('⚠️  Restart your MCP client for changes to take effect.'));
-      } else {
-        console.log(chalk.red(`\n❌ Failed to remove site "${siteId}".`));
-      }
-    } catch (error) {
-      console.error(chalk.red(`\n❌ Error: ${error.message}`));
-      process.exit(1);
-    }
-  });
-
-// Validate site command
-program
-  .command('validate <url>')
-  .description('Validate a WordPress site has MCP endpoints')
+  .command('test <url>')
+  .description('Test if MCP server works with a WordPress site')
   .action(async (url) => {
-    try {
-      console.log(chalk.blue('\n🔍 Validating WordPress MCP endpoints...\n'));
-
-      if (!url.startsWith('http')) {
-        url = `https://${url}`;
-      }
-
-      const result = await manager.validateSite(url);
-
-      if (result.valid) {
-        console.log(chalk.green('✅ Site validation successful!\n'));
-        console.log(chalk.white('Site Information:'));
-        console.log(chalk.gray('  Name:'), result.name);
-        console.log(chalk.gray('  Endpoints:'), Object.keys(result.endpoints).join(', '));
-        console.log(chalk.gray('  Capabilities:'), Object.entries(result.capabilities)
-          .filter(([, v]) => v)
-          .map(([k]) => k)
-          .join(', '));
-      } else {
-        console.log(chalk.red('❌ Site validation failed!\n'));
-        console.log(chalk.red(`Error: ${result.error}`));
-        console.log(chalk.yellow('\nTroubleshooting:'));
-        console.log('1. Ensure the LLM Ready plugin is installed and activated');
-        console.log('2. Check that WordPress REST API is enabled');
-        console.log('3. Verify the site URL is correct');
-      }
-    } catch (error) {
-      console.error(chalk.red(`\n❌ Error: ${error.message}`));
-      process.exit(1);
-    }
+    await testServer(url);
   });
 
-// Interactive mode
-program
-  .command('interactive')
-  .alias('i')
-  .description('Interactive mode for adding sites')
-  .action(async () => {
-    try {
-      console.log(chalk.blue('\n🔧 WordPress MCP Site Manager - Interactive Mode\n'));
-
-      const answers = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'url',
-          message: 'Enter WordPress site URL:',
-          validate: (input) => input.length > 0 || 'URL is required'
-        },
-        {
-          type: 'input',
-          name: 'name',
-          message: 'Enter site name (optional):',
-        },
-        {
-          type: 'input',
-          name: 'id',
-          message: 'Enter site ID (optional, auto-generated if empty):',
-        },
-        {
-          type: 'checkbox',
-          name: 'clients',
-          message: 'Select MCP clients:',
-          choices: [
-            { name: 'Claude Desktop', value: 'claude', checked: true },
-            { name: 'Roo Code (VS Code)', value: 'roo' },
-            { name: 'Custom Config File', value: 'custom' }
-          ]
-        },
-        {
-          type: 'confirm',
-          name: 'validate',
-          message: 'Validate site before adding?',
-          default: true
-        }
-      ]);
-
-      // Handle custom config path if needed
-      if (answers.clients.includes('custom')) {
-        const { customPath } = await inquirer.prompt([
-          {
-            type: 'input',
-            name: 'customPath',
-            message: 'Enter path for custom config file:',
-            default: './mcp-sites.json'
-          }
-        ]);
-        answers.customPath = customPath;
-      }
-
-      const result = await manager.addSite(answers.url, {
-        clients: answers.clients,
-        siteId: answers.id || null,
-        siteName: answers.name || null,
-        skipValidation: !answers.validate,
-        customPath: answers.customPath
-      });
-
-      console.log(chalk.green('\n✅ Site added successfully!\n'));
-      console.log(chalk.white('Summary:'));
-      console.log(chalk.gray('  ID:  '), result.siteId);
-      console.log(chalk.gray('  Name:'), result.siteName);
-      console.log(chalk.gray('  URL: '), result.url);
-
-      console.log(chalk.yellow('\n⚠️  Restart your MCP clients for changes to take effect.'));
-
-    } catch (error) {
-      console.error(chalk.red(`\n❌ Error: ${error.message}`));
-      process.exit(1);
-    }
-  });
-
-// Parse command line arguments
 program.parse(process.argv);
 
-// Show help if no command provided
+function showManualConfig(client) {
+  console.log(chalk.blue('\n📘 WordPress MCP Manual Configuration Guide\n'));
+
+  if (!client) {
+    // Show all clients
+    Object.keys(CONFIG_EXAMPLES).forEach(key => {
+      showClientConfig(key);
+      console.log('');
+    });
+  } else if (CONFIG_EXAMPLES[client]) {
+    showClientConfig(client);
+  } else {
+    console.error(chalk.red(`Unknown client: ${client}`));
+    console.log('Available clients: claude, roo');
+  }
+}
+
+function showClientConfig(client) {
+  const config = CONFIG_EXAMPLES[client];
+  const platform = os.platform();
+  const configPath = config.configPath[platform] || config.configPath.linux;
+
+  console.log(chalk.green(`=== ${config.name} ===`));
+  console.log(chalk.yellow('\nConfiguration file location:'));
+  console.log(`  ${configPath}`);
+  
+  console.log(chalk.yellow('\nConfiguration format:'));
+  console.log(JSON.stringify(config.example, null, 2));
+
+  console.log(chalk.yellow('\nSteps to configure:'));
+  console.log('1. Install WordPress MCP Client globally:');
+  console.log(chalk.cyan('   npm install -g @abnerjezweb/wordpress-mcp-client'));
+  
+  console.log('\n2. Find the installation path:');
+  console.log(chalk.cyan('   npm list -g @abnerjezweb/wordpress-mcp-client'));
+  
+  console.log('\n3. Edit your configuration file and add the mcpServers section');
+  console.log('4. Replace "/path/to/wordpress-mcp-client" with the actual path');
+  console.log('5. Replace "https://your-wordpress-site.com" with your site URL');
+  console.log('6. Restart', config.name);
+}
+
+function generateConfig(url, options) {
+  const { name, client } = options;
+  
+  if (!url.startsWith('http')) {
+    url = `https://${url}`;
+  }
+
+  const siteId = url
+    .replace(/https?:\/\//, '')
+    .replace(/[^a-zA-Z0-9]/g, '-')
+    .toLowerCase()
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  const siteName = name || `WordPress - ${new URL(url).hostname}`;
+
+  // Find global node_modules path
+  const npmRoot = require('child_process')
+    .execSync('npm root -g')
+    .toString()
+    .trim();
+  
+  const serverPath = path.join(npmRoot, '@abnerjezweb/wordpress-mcp-client/bin/wordpress-mcp-server');
+
+  let config;
+  if (client === 'claude') {
+    config = {
+      mcpServers: {
+        [`wordpress-${siteId}`]: {
+          command: "node",
+          args: [serverPath, url]
+        }
+      }
+    };
+  } else if (client === 'roo') {
+    config = {
+      "roo.mcpServers": {
+        [`wordpress-${siteId}`]: {
+          type: "stdio",
+          command: "node",
+          args: [serverPath, url],
+          name: siteName,
+          description: `WordPress MCP connection to ${siteName}`
+        }
+      }
+    };
+  } else {
+    config = {
+      [`wordpress-${siteId}`]: {
+        command: "node",
+        args: [serverPath, url],
+        name: siteName
+      }
+    };
+  }
+
+  console.log(chalk.green('\n✅ Generated configuration:\n'));
+  console.log(JSON.stringify(config, null, 2));
+
+  console.log(chalk.yellow('\n📋 To use this configuration:'));
+  console.log('1. Copy the JSON above');
+  console.log('2. Open your MCP client\'s configuration file');
+  console.log('3. Merge this configuration with existing settings');
+  console.log('4. Save and restart your MCP client');
+
+  if (client === 'claude') {
+    const platform = os.platform();
+    const configPath = CONFIG_EXAMPLES.claude.configPath[platform] || CONFIG_EXAMPLES.claude.configPath.linux;
+    console.log(chalk.cyan(`\nClaude Desktop config location: ${configPath}`));
+  } else if (client === 'roo') {
+    const platform = os.platform();
+    const configPath = CONFIG_EXAMPLES.roo.configPath[platform] || CONFIG_EXAMPLES.roo.configPath.linux;
+    console.log(chalk.cyan(`\nRoo Code config location: ${configPath}`));
+  }
+}
+
+async function testServer(url) {
+  console.log(chalk.blue(`\n🧪 Testing MCP server with ${url}...\n`));
+
+  const { spawn } = require('child_process');
+  const serverProcess = spawn('wordpress-mcp-server', [url]);
+
+  let output = '';
+  let errorOutput = '';
+
+  serverProcess.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+
+  serverProcess.stderr.on('data', (data) => {
+    errorOutput += data.toString();
+  });
+
+  // Send initialize request
+  serverProcess.stdin.write(JSON.stringify({
+    jsonrpc: "2.0",
+    id: 1,
+    method: "initialize",
+    params: {}
+  }) + '\n');
+
+  setTimeout(() => {
+    serverProcess.kill();
+    
+    if (output.includes('protocolVersion')) {
+      console.log(chalk.green('✅ Server is working correctly!'));
+      console.log(chalk.yellow('\nServer response:'));
+      console.log(output);
+    } else {
+      console.log(chalk.red('❌ Server test failed'));
+      if (errorOutput) {
+        console.log(chalk.yellow('\nError output:'));
+        console.log(errorOutput);
+      }
+    }
+  }, 2000);
+}
+
+// If no arguments provided, show help
 if (!process.argv.slice(2).length) {
   program.outputHelp();
 }

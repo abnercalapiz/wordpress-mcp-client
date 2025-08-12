@@ -8,7 +8,7 @@ A powerful TypeScript/JavaScript client library for connecting to WordPress site
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Auto-Add Sites to MCP Clients](#auto-add-sites-to-mcp-clients)
+- [Manual Configuration](#manual-configuration-for-mcp-clients)
 - [Documentation](#documentation)
 - [API Reference](#api-reference)
 - [Examples](#examples)
@@ -40,7 +40,7 @@ Model Context Protocol (MCP) is a standardized protocol that allows AI models an
 - 🔍 **Smart Search** - Advanced content search capabilities
 - 📊 **Batch Operations** - Process multiple sites simultaneously
 - 🔒 **Rate Limiting** - Built-in rate limit handling
-- 🤖 **Auto-Configuration** - CLI tool to automatically add sites to MCP clients
+- 🛠️ **Configuration Helper** - CLI tool to generate manual configurations for MCP clients
 
 ## Installation
 
@@ -124,73 +124,92 @@ const allResults = await multiSite.searchAll('product updates');
 const blogResults = await multiSite.searchByTags(['blog'], 'latest posts');
 ```
 
-## Auto-Add Sites to MCP Clients
-
-### 🚀 NEW: CLI Tool for Automatic Configuration
-
-No more manual JSON editing! Use our CLI tool to automatically add WordPress sites to your MCP clients like Claude Desktop and Roo Code.
-
-#### Global Installation (Recommended)
-
-```bash
-npm install -g @abnerjezweb/wordpress-mcp-client
-```
-
-#### How to Add a WordPress Site
-
-When you add a WordPress site, it becomes available in your AI assistant (Claude, Roo Code, etc.) so you can ask questions about it.
-
-**Basic add command:**
-```bash
-# Add your WordPress site to Claude Desktop
-mcp-site add https://yoursite.com
-
-# Add with a friendly name
-mcp-site add https://yoursite.com --name "My Awesome Site"
-
-# Add to multiple AI tools at once
-mcp-site add https://yoursite.com --clients claude roo --name "My Site"
-
-# Add with a custom ID (useful for scripts)
-mcp-site add https://yoursite.com --id mysite --name "My Site"
-```
+## Manual Configuration for MCP Clients
 
 ### 🔧 Built-in MCP Server
 
-The npm package includes a built-in MCP server that both Claude Desktop and Roo Code can use directly. When you run `mcp-site add`, it automatically configures your chosen MCP client to use this server.
+The npm package includes a built-in MCP server that both Claude Desktop and Roo Code can use. You'll need to manually configure your MCP client to use this server.
 
 **Supported MCP Clients:**
 - ✅ Claude Desktop (Anthropic's desktop app)
 - ✅ Roo Code (VS Code extension)
 - ✅ Custom MCP clients
 
-#### How to Remove a Site
+### Installation
 
-First, see what sites you have:
 ```bash
-# List all sites in Claude Desktop
-mcp-site list
-
-# List sites in Roo Code
-mcp-site list --client roo
+npm install -g @abnerjezweb/wordpress-mcp-client
 ```
 
-Then remove using the site ID:
-```bash
-# Remove from Claude Desktop
-mcp-site remove site-id
+### Manual Configuration Steps
 
-# Remove from Roo Code
-mcp-site remove site-id --client roo
+#### 1. Generate Configuration
+
+Use the CLI helper to generate the correct configuration:
+
+```bash
+# Generate config for Claude Desktop
+mcp-site generate https://yoursite.com --name "My Site" --client claude
+
+# Generate config for Roo Code
+mcp-site generate https://yoursite.com --name "My Site" --client roo
+
+# Test if the server works
+mcp-site test https://yoursite.com
 ```
 
-#### Interactive Mode (Easiest!)
+#### 2. Add to Your MCP Client
 
-Not sure about commands? Use interactive mode:
-```bash
-mcp-site interactive
+**For Claude Desktop:**
+
+Edit `~/.config/claude/claude_desktop_config.json` (Linux/Mac) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "wordpress-mysite": {
+      "command": "node",
+      "args": [
+        "/usr/lib/node_modules/@abnerjezweb/wordpress-mcp-client/bin/wordpress-mcp-server",
+        "https://your-wordpress-site.com"
+      ]
+    }
+  }
+}
 ```
-This will guide you through the process with questions.
+
+**For Roo Code:**
+
+Add to your VS Code settings.json:
+
+```json
+{
+  "roo.mcpServers": {
+    "wordpress-mysite": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/usr/lib/node_modules/@abnerjezweb/wordpress-mcp-client/bin/wordpress-mcp-server",
+        "https://your-wordpress-site.com"
+      ],
+      "name": "My WordPress Site"
+    }
+  }
+}
+```
+
+#### 3. Show Configuration Examples
+
+```bash
+# Show all configuration examples
+mcp-site show-config
+
+# Show specific client configuration
+mcp-site show-config claude
+mcp-site show-config roo
+```
+
+See [Manual Setup Guide](./docs/MANUAL_SETUP.md) for detailed instructions.
 
 ### 🤖 Using Your WordPress Site in AI Assistants
 
@@ -236,15 +255,14 @@ Your WordPress site provides these information endpoints:
    - Ask: "Search for [topic] on my website"
    - Returns: Matching pages, posts, and content
 
-See the [Auto-Add Documentation](./docs/MCP_AUTO_ADD.md) for complete technical details.
 
 ## Documentation
 
 ### Setup Guides
 
-- [MCP Client Setup Guide](./MCP_CLIENT_SETUP_GUIDE.md) - Detailed setup instructions for various MCP clients
+- [Manual Setup Guide](./docs/MANUAL_SETUP.md) - **NEW!** Detailed manual configuration instructions
+- [MCP Client Setup Guide](./MCP_CLIENT_SETUP_GUIDE.md) - Setup instructions for various MCP clients
 - [Roo Code Setup Guide](./docs/ROO_CODE_SETUP.md) - Specific guide for VS Code Roo Code extension
-- [Auto-Add Documentation](./docs/MCP_AUTO_ADD.md) - CLI tool for automatic site configuration
 - [MCP Server Documentation](./docs/MCP_SERVER.md) - Built-in MCP server details
 - [API Documentation](./docs/API.md) - Complete API reference
 - [Examples](./docs/EXAMPLES.md) - Code examples and use cases
@@ -446,16 +464,16 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-**Version**: 1.0.8  
+**Version**: 1.0.9  
 **Author**: Jezweb  
 **Website**: [https://www.jezweb.com.au/](https://www.jezweb.com.au/)
 
-## What's New in v1.0.8
+## What's New in v1.0.9
 
-- 🚀 **Built-in MCP Server** - No more external dependencies! Works out of the box with Claude Desktop and Roo Code
-- 🎯 **Roo Code Support** - Full support for VS Code's Roo Code extension with automatic configuration
-- 🔧 **Fixed Claude Desktop Connection** - Resolved "Could not connect to MCP server" errors
-- 📦 **Simplified Setup** - Just run `mcp-site add` and it works!
+- 🔧 **Manual Configuration Only** - Removed auto-add functionality for better reliability and user control
+- 📝 **Improved Documentation** - Cleaner examples using only working configurations
+- 🗑️ **Removed Outdated Code** - Cleaned up references to non-existent packages
+- ✨ **CLI Helper Tools** - Generate, test, and show configuration examples
 
 ## Changelog
 

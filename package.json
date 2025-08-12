@@ -26,13 +26,7 @@
     "lint": "eslint src --ext .ts",
     "prepublishOnly": "npm run build && npm test",
     "example": "node examples/basic-usage.js",
-    "mcp": "node scripts/mcp-cli.js",
-    "mcp:add": "node scripts/mcp-cli.js add",
-    "mcp:list": "node scripts/mcp-cli.js list",
-    "mcp:remove": "node scripts/mcp-cli.js remove",
-    "mcp:validate": "node scripts/mcp-cli.js validate",
-    "mcp:interactive": "node scripts/mcp-cli.js interactive",
-    "serve": "node scripts/mcp-serve.js"
+    "mcp": "node scripts/mcp-cli.js"
   },
   "keywords": [
     "wordpress",

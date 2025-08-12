@@ -6,7 +6,7 @@ This guide explains how to use WordPress MCP Client with Roo Code (VS Code exten
 
 Roo Code is a VS Code extension that supports the Model Context Protocol (MCP). The WordPress MCP Client can automatically configure Roo Code to connect to your WordPress sites.
 
-## Automatic Setup
+## Manual Setup
 
 ### 1. Install the npm package globally
 
@@ -14,25 +14,19 @@ Roo Code is a VS Code extension that supports the Model Context Protocol (MCP). 
 npm install -g @abnerjezweb/wordpress-mcp-client
 ```
 
-### 2. Add your WordPress site to Roo Code
+### 2. Generate configuration for your WordPress site
 
 ```bash
-# Basic command
-mcp-site add https://yoursite.com --client roo --name "My WordPress Site"
+# Generate configuration
+mcp-site generate https://yoursite.com --name "My WordPress Site" --client roo
 
-# Add to both Claude and Roo
-mcp-site add https://yoursite.com --clients claude roo --name "My Site"
-
-# With custom ID
-mcp-site add https://yoursite.com --client roo --id mysite --name "My Site"
+# Show configuration examples
+mcp-site show-config roo
 ```
 
-### 3. Reload VS Code
+### 3. Add to VS Code settings
 
-After adding a site, reload VS Code for the changes to take effect:
-- Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
-- Type "Developer: Reload Window"
-- Press Enter
+Copy the generated configuration and add it to your VS Code settings.json file.
 
 ## How It Works
 
@@ -63,19 +57,6 @@ Once configured, you can use Roo Code to interact with your WordPress site:
    - "Search for articles about SEO"
    - "Show me the contact information"
 
-## Managing Sites
-
-### List configured sites
-
-```bash
-mcp-site list --client roo
-```
-
-### Remove a site
-
-```bash
-mcp-site remove site-id --client roo
-```
 
 ## Manual Configuration
 
@@ -105,7 +86,7 @@ Roo Code supports two types of MCP servers:
 ### 1. STDIO Server (Recommended)
 - Uses standard input/output for communication
 - Automatically managed by Roo Code
-- Used by default when you run `mcp-site add`
+- Best for most use cases
 
 ### 2. HTTP Server (Alternative)
 For advanced users who want to run a persistent HTTP server:

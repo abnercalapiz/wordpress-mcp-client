@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "wordpress-example": {
+      "command": "node",
+      "args": [
+        "/usr/lib/node_modules/@abnerjezweb/wordpress-mcp-client/bin/wordpress-mcp-server",
+        "https://example-wordpress-site.com"
+      ]
+    }
+  }
+}

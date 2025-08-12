@@ -34,25 +34,11 @@ Edit the config file and add your WordPress site:
 {
   "mcpServers": {
     "wordpress-site": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch@latest"],
-      "env": {
-        "FETCH_CONFIG": JSON.stringify({
-          "wordpress": {
-            "baseUrl": "https://your-domain.com/wp-json/llmr/mcp/v1",
-            "endpoints": {
-              "discovery": "/discovery",
-              "business": "/business",
-              "contact": "/contact",
-              "services": "/services",
-              "search": {
-                "path": "/search",
-                "method": "POST"
-              }
-            }
-          }
-        })
-      }
+      "command": "node",
+      "args": [
+        "/usr/lib/node_modules/@abnerjezweb/wordpress-mcp-client/bin/wordpress-mcp-server",
+        "https://your-domain.com"
+      ]
     }
   }
 }
@@ -274,28 +260,18 @@ For managing multiple WordPress sites, create separate configurations for each:
 {
   "mcpServers": {
     "wordpress-site-1": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch@latest"],
-      "env": {
-        "FETCH_CONFIG": JSON.stringify({
-          "site1": {
-            "baseUrl": "https://site1.com/wp-json/llmr/mcp/v1",
-            "endpoints": { /* ... */ }
-          }
-        })
-      }
+      "command": "node",
+      "args": [
+        "/usr/lib/node_modules/@abnerjezweb/wordpress-mcp-client/bin/wordpress-mcp-server",
+        "https://site1.com"
+      ]
     },
     "wordpress-site-2": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch@latest"],
-      "env": {
-        "FETCH_CONFIG": JSON.stringify({
-          "site2": {
-            "baseUrl": "https://site2.com/wp-json/llmr/mcp/v1",
-            "endpoints": { /* ... */ }
-          }
-        })
-      }
+      "command": "node",
+      "args": [
+        "/usr/lib/node_modules/@abnerjezweb/wordpress-mcp-client/bin/wordpress-mcp-server",
+        "https://site2.com"
+      ]
     }
   }
 }

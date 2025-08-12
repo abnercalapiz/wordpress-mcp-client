@@ -7,15 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.9] - 2024-12-12
 
-### Fixed
-- Fixed `mcp-site add` not working properly with Claude Desktop
-- Changed configuration to use direct `wordpress-mcp-server` command instead of npx
-- Fixed "could not determine executable to run" error with npx
-- Updated list functionality to recognize the new command format
-
 ### Changed
-- Claude Desktop configuration now uses `"command": "wordpress-mcp-server"` for better reliability
-- Roo Code configuration also updated to use direct command
+- Removed automatic configuration functionality for better reliability
+- Replaced with manual configuration guide and helper tools
+- CLI now provides `generate`, `show-config`, and `test` commands for manual setup
+- Focus on user-controlled configuration
+- Updated all documentation to use working configurations with built-in MCP server
+
+### Added
+- Manual setup documentation with detailed instructions
+- Configuration generator for different MCP clients
+- Server testing functionality
+- Working example configurations for Claude Desktop and Roo Code
+
+### Removed
+- Auto-add functionality and all related code
+- Automatic modification of MCP client configuration files
+- Outdated example configurations using non-existent packages
+- References to @modelcontextprotocol/server-fetch
+- Claude Desktop troubleshooting guide with outdated information
 
 ## [1.0.8] - 2024-12-12
 
@@ -34,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated mcp-config-manager.js to use the built-in server for both Claude and Roo
 
 ### Changed
-- `mcp-site add` now configures Claude Desktop to use `npx @abnerjezweb/wordpress-mcp-client serve <url>`
+- Configuration format updated for better compatibility
 - Roo Code configuration now uses stdio type with the same built-in server
 - Added bin directory to published npm package files
 - Updated list sites functionality to handle both old and new configuration formats for all clients
@@ -93,13 +103,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.2] - 2024-12-12
 
 ### Added
-- 🚀 **CLI Tool** (`mcp-site`) for automatically adding WordPress sites to MCP clients
-  - Add sites to Claude Desktop, Roo Code, and custom configurations
-  - Interactive mode for guided setup
-  - Site validation before adding
-  - List and remove configured sites
+- 🚀 **CLI Tool** (`mcp-site`) for helping with WordPress MCP configuration
+  - Generate configuration for Claude Desktop, Roo Code, and custom clients
+  - Show configuration examples
+  - Test MCP server functionality
 - 📚 Comprehensive documentation suite
-  - Auto-Add Documentation (MCP_AUTO_ADD.md)
+  - Manual Setup Documentation (MANUAL_SETUP.md)
   - API Documentation (API.md)
   - Examples Documentation (EXAMPLES.md) with 16 detailed examples
   - Troubleshooting Guide (TROUBLESHOOTING.md)

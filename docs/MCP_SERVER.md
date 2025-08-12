@@ -12,25 +12,6 @@ Claude Desktop → MCP Server (Node.js) → WordPress REST API
 
 ## Using the Built-in Server
 
-### With the CLI Tool (Automatic)
-
-When you use `mcp-site add`, it automatically configures Claude Desktop to use the built-in server:
-
-```bash
-mcp-site add https://yoursite.com --name "My Site"
-```
-
-This creates a configuration like:
-```json
-{
-  "mcpServers": {
-    "wordpress-yoursite-com": {
-      "command": "npx",
-      "args": ["-y", "@abnerjezweb/wordpress-mcp-client", "serve", "https://yoursite.com"]
-    }
-  }
-}
-```
 
 ### Manual Usage
 

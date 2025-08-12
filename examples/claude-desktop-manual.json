@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "wordpress-newcastleseo": {
+      "command": "node",
+      "args": [
+        "/usr/lib/node_modules/@abnerjezweb/wordpress-mcp-client/bin/wordpress-mcp-server",
+        "https://www.newcastleseo.com.au"
+      ]
+    }
+  }
+}
