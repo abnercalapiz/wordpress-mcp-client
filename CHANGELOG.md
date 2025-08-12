@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2024-12-12
+
+### Added
+- Comprehensive natural language documentation in README
+- Clear examples for adding sites with name, ID, and multiple clients
+- Step-by-step guide for removing sites
+- Natural language examples for using MCP endpoints
+- Explanation of what each endpoint does in plain English
+
+### Improved
+- README now includes practical examples of asking AI assistants about your WordPress site
+- Better documentation structure with user-friendly language
+
 ## [1.0.4] - 2024-12-12
 
 ### Fixed

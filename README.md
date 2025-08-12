@@ -128,7 +128,7 @@ const blogResults = await multiSite.searchByTags(['blog'], 'latest posts');
 
 ### 🚀 NEW: CLI Tool for Automatic Configuration
 
-No more manual JSON editing! Use our CLI tool to automatically add WordPress sites to your MCP clients.
+No more manual JSON editing! Use our CLI tool to automatically add WordPress sites to your MCP clients like Claude Desktop and Roo Code.
 
 #### Global Installation (Recommended)
 
@@ -136,26 +136,98 @@ No more manual JSON editing! Use our CLI tool to automatically add WordPress sit
 npm install -g @abnerjezweb/wordpress-mcp-client
 ```
 
-#### Quick Examples
+#### How to Add a WordPress Site
 
+When you add a WordPress site, it becomes available in your AI assistant (Claude, Roo Code, etc.) so you can ask questions about it.
+
+**Basic add command:**
 ```bash
-# Add a site to Claude Desktop (default)
+# Add your WordPress site to Claude Desktop
 mcp-site add https://yoursite.com
 
-# Add to multiple clients
-mcp-site add https://yoursite.com --clients claude roo
+# Add with a friendly name
+mcp-site add https://yoursite.com --name "My Awesome Site"
 
-# Interactive mode
-mcp-site interactive
+# Add to multiple AI tools at once
+mcp-site add https://yoursite.com --clients claude roo --name "My Site"
 
-# List configured sites
-mcp-site list
-
-# Validate a site
-mcp-site validate https://yoursite.com
+# Add with a custom ID (useful for scripts)
+mcp-site add https://yoursite.com --id mysite --name "My Site"
 ```
 
-See the [Auto-Add Documentation](./docs/MCP_AUTO_ADD.md) for complete details.
+#### How to Remove a Site
+
+First, see what sites you have:
+```bash
+# List all sites in Claude Desktop
+mcp-site list
+
+# List sites in Roo Code
+mcp-site list --client roo
+```
+
+Then remove using the site ID:
+```bash
+# Remove from Claude Desktop
+mcp-site remove site-id
+
+# Remove from Roo Code
+mcp-site remove site-id --client roo
+```
+
+#### Interactive Mode (Easiest!)
+
+Not sure about commands? Use interactive mode:
+```bash
+mcp-site interactive
+```
+This will guide you through the process with questions.
+
+### 🤖 Using Your WordPress Site in AI Assistants
+
+Once you've added your WordPress site, restart your AI assistant (Claude Desktop or VS Code). Then you can use natural language to interact with your site:
+
+#### Natural Language Examples
+
+**Ask about your business:**
+- "What services does my WordPress site offer?"
+- "Show me the contact information from my website"
+- "What's the business description on my site?"
+
+**Search your content:**
+- "Search my WordPress site for articles about SEO"
+- "Find all blog posts about WordPress security"
+- "What content do I have about web design?"
+
+**Get specific information:**
+- "What are the business hours listed on my site?"
+- "Show me all the services with their prices"
+- "What's the main phone number on my website?"
+
+#### How the MCP Endpoints Work
+
+Your WordPress site provides these information endpoints:
+
+1. **Discovery** (`/discovery`) - Shows what information is available
+   - Ask: "What information can I get from my WordPress site?"
+
+2. **Business** (`/business`) - Your business details
+   - Ask: "Tell me about the business on my website"
+   - Returns: Company name, description, mission, values
+
+3. **Contact** (`/contact`) - Contact information
+   - Ask: "What's the contact info on my site?"
+   - Returns: Email, phone, address, social media, hours
+
+4. **Services** (`/services`) - Products or services you offer
+   - Ask: "What services are listed on my website?"
+   - Returns: Service names, descriptions, prices
+
+5. **Search** (`/search`) - Search your content
+   - Ask: "Search for [topic] on my website"
+   - Returns: Matching pages, posts, and content
+
+See the [Auto-Add Documentation](./docs/MCP_AUTO_ADD.md) for complete technical details.
 
 ## Documentation
 
@@ -363,7 +435,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-**Version**: 1.0.4  
+**Version**: 1.0.5  
 **Author**: Jezweb  
 **Website**: [https://www.jezweb.com.au/](https://www.jezweb.com.au/)
 
