@@ -1,5 +1,9 @@
 // Basic usage example for @abnerjezweb/wordpress-mcp-client
-const { WordPressMCPClient } = require('@abnerjezweb/wordpress-mcp-client');
+// For npm package usage:
+// const { WordPressMCPClient } = require('@abnerjezweb/wordpress-mcp-client');
+
+// For local development:
+const { WordPressMCPClient } = require('../dist/index');
 
 async function main() {
   // Initialize client

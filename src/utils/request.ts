@@ -1,5 +1,4 @@
-import fetch from 'node-fetch';
-import type { RequestInit } from 'node-fetch';
+import fetch, { RequestInit } from 'node-fetch';
 import { WordPressMCPError, NetworkError, TimeoutError } from './errors';
 
 export interface RequestOptions extends RequestInit {
@@ -29,11 +28,11 @@ export async function makeRequest<T>(
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData = await response.json().catch(() => ({}) as any);
       throw new WordPressMCPError(
-        errorData.message || `HTTP ${response.status}: ${response.statusText}`,
+        (errorData as any).message || `HTTP ${response.status}: ${response.statusText}`,
         response.status,
-        errorData.code
+        (errorData as any).code
       );
     }
 

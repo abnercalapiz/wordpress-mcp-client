@@ -1,5 +1,9 @@
 // Multi-site management example
-const { WordPressMCPMultiSite } = require('@abnerjezweb/wordpress-mcp-client');
+// For npm package usage:
+// const { WordPressMCPMultiSite } = require('@abnerjezweb/wordpress-mcp-client');
+
+// For local development:
+const { WordPressMCPMultiSite } = require('../dist/index');
 
 async function multiSiteExample() {
   // Initialize with multiple sites

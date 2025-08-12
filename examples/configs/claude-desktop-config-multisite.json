@@ -1,0 +1,76 @@
+{
+  "mcpServers": {
+    "wordpress-main-site": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch@latest"
+      ],
+      "env": {
+        "FETCH_CONFIG": {
+          "main": {
+            "baseUrl": "https://main-site.com/wp-json/llmr/mcp/v1",
+            "endpoints": {
+              "discovery": "/discovery",
+              "business": "/business",
+              "contact": "/contact",
+              "services": "/services",
+              "search": {
+                "path": "/search",
+                "method": "POST"
+              }
+            }
+          }
+        }
+      }
+    },
+    "wordpress-blog": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch@latest"
+      ],
+      "env": {
+        "FETCH_CONFIG": {
+          "blog": {
+            "baseUrl": "https://blog.example.com/wp-json/llmr/mcp/v1",
+            "endpoints": {
+              "discovery": "/discovery",
+              "business": "/business",
+              "contact": "/contact",
+              "services": "/services",
+              "search": {
+                "path": "/search",
+                "method": "POST"
+              }
+            }
+          }
+        }
+      }
+    },
+    "wordpress-shop": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch@latest"
+      ],
+      "env": {
+        "FETCH_CONFIG": {
+          "shop": {
+            "baseUrl": "https://shop.example.com/wp-json/llmr/mcp/v1",
+            "endpoints": {
+              "discovery": "/discovery",
+              "business": "/business",
+              "contact": "/contact",
+              "services": "/services",
+              "search": {
+                "path": "/search",
+                "method": "POST"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

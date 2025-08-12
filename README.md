@@ -1,79 +1,186 @@
 # WordPress MCP Client
 
-Official JavaScript/TypeScript client for WordPress sites using the LLM Ready plugin. Connect to your WordPress MCP endpoints with full TypeScript support.
+A powerful TypeScript/JavaScript client library for connecting to WordPress sites equipped with the LLM Ready plugin's Model Context Protocol (MCP) server. This library enables AI applications and tools to interact with WordPress content through a standardized protocol.
 
-[![npm version](https://img.shields.io/npm/v/@abnerjezweb/wordpress-mcp-client.svg)](https://www.npmjs.com/package/@abnerjezweb/wordpress-mcp-client)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Auto-Add Sites to MCP Clients](#auto-add-sites-to-mcp-clients)
+- [Documentation](#documentation)
+- [API Reference](#api-reference)
+- [Examples](#examples)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Overview
+
+The WordPress MCP Client provides a seamless way to connect AI tools, language models, and other applications to WordPress sites. It implements the Model Context Protocol (MCP) to enable structured data exchange between AI systems and WordPress content.
+
+### What is MCP?
+
+Model Context Protocol (MCP) is a standardized protocol that allows AI models and tools to interact with external systems in a structured way. The WordPress implementation provides endpoints for:
+
+- Business information retrieval
+- Contact details access
+- Service/product listings
+- Content search functionality
+- Site discovery and capabilities
 
 ## Features
 
-- 🚀 **Simple API** - Clean, promise-based interface
+- 🚀 **Easy Integration** - Simple API for connecting to WordPress MCP endpoints
 - 📦 **TypeScript Support** - Full type definitions included
-- 🌐 **Multi-Site Management** - Manage 100+ WordPress sites
-- ⚡ **Lightweight** - Minimal dependencies
-- 🛡️ **Error Handling** - Comprehensive error types
-- 🔄 **Concurrent Requests** - Optimized for performance
+- 🔄 **Multi-Site Management** - Handle multiple WordPress sites efficiently
+- ⚡ **Performance Optimized** - Connection pooling and request optimization
+- 🛡️ **Error Handling** - Comprehensive error types and handling
+- 🔍 **Smart Search** - Advanced content search capabilities
+- 📊 **Batch Operations** - Process multiple sites simultaneously
+- 🔒 **Rate Limiting** - Built-in rate limit handling
+- 🤖 **Auto-Configuration** - CLI tool to automatically add sites to MCP clients
 
 ## Installation
+
+### NPM Package (Library Usage)
 
 ```bash
 npm install @abnerjezweb/wordpress-mcp-client
 ```
 
-or
+### Global Installation (CLI Tool)
 
 ```bash
-yarn add @abnerjezweb/wordpress-mcp-client
+# Install globally to use the mcp-site CLI tool
+npm install -g @abnerjezweb/wordpress-mcp-client
+
+# Verify installation
+mcp-site --version
+```
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone [repository-url]
+cd wordpress-mcp-client
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Run tests
+npm test
 ```
 
 ## Quick Start
 
-### Single Site
+### Basic Usage
 
-```typescript
+```javascript
 import { WordPressMCPClient } from '@abnerjezweb/wordpress-mcp-client';
 
+// Initialize client
 const client = new WordPressMCPClient({
-  baseUrl: 'https://yoursite.com/wp-json/llmr/mcp/v1'
+  baseUrl: 'https://your-wordpress-site.com/wp-json/llmr/mcp/v1'
 });
-
-// Search for content
-const results = await client.search('wordpress tips');
-console.log(results.data.results);
 
 // Get business information
 const business = await client.business();
-console.log(business.data.name);
+console.log(business);
+
+// Search content
+const results = await client.search('wordpress tips', { limit: 5 });
+console.log(results);
 ```
 
-### Multiple Sites
+### Multi-Site Usage
 
-```typescript
+```javascript
 import { WordPressMCPMultiSite } from '@abnerjezweb/wordpress-mcp-client';
 
+// Configure multiple sites
 const multiSite = new WordPressMCPMultiSite({
-  'site1': {
-    name: 'My Blog',
-    url: 'https://myblog.com',
-    tags: ['blog', 'personal']
+  'main': {
+    name: 'Main Website',
+    url: 'https://mainsite.com',
+    tags: ['primary', 'business']
   },
-  'site2': {
-    name: 'Company Site',
-    url: 'https://company.com',
-    tags: ['business', 'corporate']
+  'blog': {
+    name: 'Company Blog',
+    url: 'https://blog.company.com',
+    tags: ['blog', 'content']
   }
 });
 
 // Search across all sites
-const results = await multiSite.searchAll('product updates');
+const allResults = await multiSite.searchAll('product updates');
 
-// Search only blog sites
-const blogResults = await multiSite.searchByTag('blog', 'wordpress tips');
+// Search specific sites by tag
+const blogResults = await multiSite.searchByTags(['blog'], 'latest posts');
 ```
+
+## Auto-Add Sites to MCP Clients
+
+### 🚀 NEW: CLI Tool for Automatic Configuration
+
+No more manual JSON editing! Use our CLI tool to automatically add WordPress sites to your MCP clients.
+
+#### Global Installation (Recommended)
+
+```bash
+npm install -g @abnerjezweb/wordpress-mcp-client
+```
+
+#### Quick Examples
+
+```bash
+# Add a site to Claude Desktop (default)
+mcp-site add https://yoursite.com
+
+# Add to multiple clients
+mcp-site add https://yoursite.com --clients claude roo
+
+# Interactive mode
+mcp-site interactive
+
+# List configured sites
+mcp-site list
+
+# Validate a site
+mcp-site validate https://yoursite.com
+```
+
+See the [Auto-Add Documentation](./docs/MCP_AUTO_ADD.md) for complete details.
+
+## Documentation
+
+### Setup Guides
+
+- [MCP Client Setup Guide](./MCP_CLIENT_SETUP_GUIDE.md) - Detailed setup instructions for various MCP clients
+- [Auto-Add Documentation](./docs/MCP_AUTO_ADD.md) - CLI tool for automatic site configuration
+- [API Documentation](./docs/API.md) - Complete API reference
+- [Examples](./docs/EXAMPLES.md) - Code examples and use cases
+- [Troubleshooting](./docs/TROUBLESHOOTING.md) - Common issues and solutions
+
+### WordPress Plugin Requirements
+
+This client requires the WordPress site to have the **LLM Ready** plugin installed and activated. The plugin provides:
+
+1. MCP server endpoints at `/wp-json/llmr/mcp/v1/`
+2. Automatic content indexing
+3. SEO plugin integration
+4. Rate limiting and security features
 
 ## API Reference
 
 ### WordPressMCPClient
+
+The main client class for single WordPress site connections.
 
 #### Constructor
 
@@ -81,234 +188,186 @@ const blogResults = await multiSite.searchByTag('blog', 'wordpress tips');
 new WordPressMCPClient(config: WordPressMCPConfig)
 ```
 
-**Config Options:**
-- `baseUrl` (required): The base URL for your WordPress MCP endpoints
-- `timeout` (optional): Request timeout in milliseconds (default: 30000)
-- `headers` (optional): Custom headers for all requests
+**Parameters:**
+- `config.baseUrl` (string) - The base URL of the WordPress MCP endpoint
+- `config.timeout` (number, optional) - Request timeout in milliseconds (default: 30000)
+- `config.retries` (number, optional) - Number of retry attempts (default: 3)
 
 #### Methods
 
-##### `discovery()`
-Get available endpoints and their capabilities.
+##### `discovery(): Promise<DiscoveryResponse>`
+Get available endpoints and capabilities.
 
-```typescript
-const endpoints = await client.discovery();
-```
+##### `business(): Promise<BusinessInfo>`
+Retrieve business information including name, description, and details.
 
-##### `business()`
-Get business information.
+##### `contact(): Promise<ContactInfo>`
+Get contact information including address, phone, email, and social media.
 
-```typescript
-const business = await client.business();
-console.log(business.data.hours);
-```
+##### `services(): Promise<Service[]>`
+List all services or products offered.
 
-##### `contact()`
-Get contact information.
+##### `search(query: string, options?: SearchOptions): Promise<SearchResult[]>`
+Search WordPress content.
 
-```typescript
-const contact = await client.contact();
-console.log(contact.data.email);
-```
-
-##### `services()`
-Get services/products list.
-
-```typescript
-const services = await client.services();
-```
-
-##### `search(query, options?)`
-Search for content.
-
-```typescript
-const results = await client.search('keyword', {
-  per_page: 10,
-  post_type: 'post'
-});
-```
-
-**Search Options:**
-- `per_page`: Number of results per page
-- `page`: Page number
-- `post_type`: Filter by post type
-- `orderby`: Sort by 'date', 'relevance', or 'title'
-- `order`: Sort order 'asc' or 'desc'
+**Parameters:**
+- `query` (string) - The search query
+- `options.limit` (number, optional) - Maximum results to return
+- `options.type` (string, optional) - Content type filter
 
 ### WordPressMCPMultiSite
+
+Manages multiple WordPress sites with MCP endpoints.
 
 #### Constructor
 
 ```typescript
-new WordPressMCPMultiSite(sites: Record<string, SiteConfig | string>)
+new WordPressMCPMultiSite(sites: Record<string, SiteConfig>)
 ```
 
 #### Methods
 
-##### `addSite(id, config)`
-Add a new site dynamically.
+##### `addSite(id: string, config: SiteConfig): void`
+Add a new site to the manager.
 
-```typescript
-multiSite.addSite('site3', {
-  name: 'New Site',
-  url: 'https://newsite.com',
-  tags: ['new']
-});
-```
+##### `removeSite(id: string): void`
+Remove a site from the manager.
 
-##### `removeSite(id)`
-Remove a site.
+##### `searchAll(query: string, options?: SearchOptions): Promise<MultiSiteResults>`
+Search across all configured sites.
 
-```typescript
-multiSite.removeSite('site3');
-```
+##### `searchByTags(tags: string[], query: string, options?: SearchOptions): Promise<MultiSiteResults>`
+Search only sites with specific tags.
 
-##### `searchAll(query, options?)`
-Search across all sites with concurrency control.
-
-```typescript
-const results = await multiSite.searchAll('query', {
-  concurrency: 5, // Process 5 sites at a time
-  per_page: 20
-});
-```
-
-##### `searchByTag(tag, query, options?)`
-Search only sites with specific tag.
-
-```typescript
-const results = await multiSite.searchByTag('ecommerce', 'products');
-```
-
-##### `healthCheck()`
-Check health status of all sites.
-
-```typescript
-const health = await multiSite.healthCheck();
-// Returns: [{ site: 'site1', status: 'healthy' }, ...]
-```
-
-## Error Handling
-
-The client provides specific error types:
-
-```typescript
-import { WordPressMCPError, NetworkError, TimeoutError } from '@abnerjezweb/wordpress-mcp-client';
-
-try {
-  const results = await client.search('test');
-} catch (error) {
-  if (error instanceof TimeoutError) {
-    console.error('Request timed out');
-  } else if (error instanceof NetworkError) {
-    console.error('Network error:', error.message);
-  } else if (error instanceof WordPressMCPError) {
-    console.error(`MCP Error (${error.status}):`, error.message);
-  }
-}
-```
+##### `getSitesByTag(tag: string): Site[]`
+Get all sites that have a specific tag.
 
 ## Examples
 
-### Basic Usage
+### Error Handling
 
-```typescript
-import { WordPressMCPClient } from '@abnerjezweb/wordpress-mcp-client';
-
-async function main() {
-  const client = new WordPressMCPClient({
-    baseUrl: 'https://example.com/wp-json/llmr/mcp/v1'
-  });
-
-  // Get all available endpoints
-  const discovery = await client.discovery();
-  console.log('Available endpoints:', discovery.data.endpoints);
-
-  // Search with pagination
-  const page1 = await client.search('wordpress', { page: 1 });
-  const page2 = await client.search('wordpress', { page: 2 });
-}
-```
-
-### Multi-Site Management
-
-```typescript
-import { WordPressMCPMultiSite } from '@abnerjezweb/wordpress-mcp-client';
-
-async function manageSites() {
-  // Initialize with multiple sites
-  const sites = new WordPressMCPMultiSite({
-    'blog1': 'https://blog1.com',
-    'blog2': 'https://blog2.com',
-    'shop': {
-      name: 'My Shop',
-      url: 'https://shop.com',
-      tags: ['ecommerce']
-    }
-  });
-
-  // Add site dynamically
-  sites.addSite('newblog', 'https://newblog.com');
-
-  // Search with error handling
-  const results = await sites.searchAll('products');
-  
-  for (const result of results) {
-    if (result.error) {
-      console.error(`${result.site} failed:`, result.error);
-    } else {
-      console.log(`${result.site}: ${result.results.data.total} results`);
-    }
-  }
-}
-```
-
-### MCP Server Integration
-
-```typescript
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { WordPressMCPClient } from '@abnerjezweb/wordpress-mcp-client';
+```javascript
+import { WordPressMCPClient, WordPressMCPError } from '@abnerjezweb/wordpress-mcp-client';
 
 const client = new WordPressMCPClient({
-  baseUrl: process.env.WORDPRESS_URL + '/wp-json/llmr/mcp/v1'
+  baseUrl: 'https://example.com/wp-json/llmr/mcp/v1'
 });
 
-// Use in MCP tool handlers
-server.setRequestHandler('tools/call', async (request) => {
-  if (request.params.name === 'search_wordpress') {
-    const results = await client.search(request.params.arguments.query);
-    return { toolResult: results };
+try {
+  const results = await client.search('content');
+} catch (error) {
+  if (error instanceof WordPressMCPError) {
+    console.error('MCP Error:', error.message);
+    console.error('Status:', error.statusCode);
+  } else {
+    console.error('Unexpected error:', error);
   }
+}
+```
+
+### Custom Configuration
+
+```javascript
+const client = new WordPressMCPClient({
+  baseUrl: 'https://example.com/wp-json/llmr/mcp/v1',
+  timeout: 60000, // 60 seconds
+  retries: 5
 });
 ```
 
-## Requirements
+### Batch Processing
 
-- Node.js 14+
-- WordPress site with LLM Ready plugin v1.0.0+
-- HTTPS enabled on WordPress site
+```javascript
+const multiSite = new WordPressMCPMultiSite(sites);
 
-## TypeScript
+// Process results from multiple sites
+const results = await multiSite.searchAll('wordpress security');
 
-This package is written in TypeScript and includes full type definitions. All response types are fully typed for excellent IDE support.
+for (const [siteId, siteResults] of Object.entries(results)) {
+  console.log(`Results from ${siteId}:`);
+  siteResults.forEach(result => {
+    console.log(`- ${result.title}: ${result.url}`);
+  });
+}
+```
 
-```typescript
-import { BusinessInfo, SearchResponse } from '@abnerjezweb/wordpress-mcp-client';
+## Development
 
-const business: BusinessInfo = await client.business();
-const search: SearchResponse = await client.search('query');
+### Project Structure
+
+```
+wordpress-mcp-client/
+├── src/               # TypeScript source files
+│   ├── client.ts      # Main client implementation
+│   ├── multi-site.ts  # Multi-site manager
+│   ├── types.ts       # TypeScript type definitions
+│   └── errors.ts      # Error classes
+├── lib/               # Compiled JavaScript
+├── docs/              # Documentation
+├── examples/          # Example implementations
+└── tests/             # Test files
+```
+
+### Building
+
+```bash
+# Development build
+npm run build:dev
+
+# Production build
+npm run build
+
+# Watch mode
+npm run watch
+```
+
+### Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Watch mode
+npm run test:watch
 ```
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT © [Jezweb](https://www.jezweb.com.au)
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
-## Links
+## Support
 
-- [WordPress Plugin](https://github.com/abnercalapiz/LLMReady)
-- [Documentation](https://github.com/abnercalapiz/wordpress-mcp-client)
-- [npm Package](https://www.npmjs.com/package/@abnerjezweb/wordpress-mcp-client)
+- **Documentation**: See the `/docs` folder
+- **Issues**: [GitHub Issues](https://github.com/[your-repo]/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/[your-repo]/discussions)
+
+## Acknowledgments
+
+- Built for the WordPress LLM Ready plugin
+- Implements the Model Context Protocol (MCP) standard
+- Inspired by the need for AI-WordPress integration
+
+---
+
+**Version**: 1.0.2  
+**Author**: Jezweb  
+**Website**: [https://www.jezweb.com.au/](https://www.jezweb.com.au/)
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for a detailed list of changes.

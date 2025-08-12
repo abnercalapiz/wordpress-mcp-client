@@ -7,7 +7,7 @@
         "@modelcontextprotocol/server-fetch@latest"
       ],
       "env": {
-        "FETCH_CONFIG": {
+        "FETCH_CONFIG": JSON.stringify({
           "wordpress": {
             "baseUrl": "https://your-domain.com/wp-json/llmr/mcp/v1",
             "endpoints": {
@@ -21,7 +21,7 @@
               }
             }
           }
-        }
+        })
       }
     }
   }

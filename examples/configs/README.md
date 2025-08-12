@@ -1,60 +1,92 @@
-# MCP Configuration Examples
+# WordPress MCP Configuration Examples
 
-This folder contains example configurations for connecting to WordPress sites using the WordPress MCP Client.
+This folder contains example configurations for connecting to WordPress sites using the Model Context Protocol (MCP).
 
-## Available Examples
+## Configuration Files
 
-### 1. Claude Desktop Configuration
-- **File**: `claude-desktop-config.json`
-- **Purpose**: Connect your WordPress site to Claude Desktop app
-- **Usage**: Copy to your Claude Desktop config location and update the URL
+### 1. Single Site Configuration
+**File**: `claude-desktop-config.json`
 
-### 2. Simple MCP Configuration
-- **File**: `mcp-simple-config.json`
-- **Purpose**: Basic MCP setup with minimal endpoints
-- **Best for**: Getting started quickly
+This configuration shows how to connect a single WordPress site to Claude Desktop.
 
-### 3. Search-Focused Configuration
-- **File**: `mcp-search-config.json`
-- **Purpose**: Optimized for content search functionality
-- **Best for**: Sites with lots of searchable content
+**Usage**:
+1. Copy this file to your Claude Desktop configuration location:
+   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+   - **Linux**: `~/.config/claude/claude_desktop_config.json`
 
-### 4. Full Tools Configuration
-- **File**: `mcp-tools-config.json`
-- **Purpose**: Complete MCP setup with all available tools
-- **Best for**: Advanced users wanting full functionality
+2. Replace `https://your-domain.com` with your actual WordPress site URL
 
-### 5. Connection Examples
-- **File**: `mcp-connection.json`
-- **Purpose**: Shows different connection methods
-- **Best for**: Understanding connection options
+3. Restart Claude Desktop
 
-## How to Use
+### 2. Multi-Site Configuration
+**File**: `claude-desktop-config-multisite.json`
 
-1. Choose the configuration that best fits your needs
-2. Copy the JSON file
-3. Replace `https://your-domain.com` with your actual WordPress site URL
-4. Add to your AI tool's configuration:
-   - **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json` (Mac)
-   - **Other tools**: Check their documentation
+This configuration demonstrates how to connect multiple WordPress sites to Claude Desktop.
 
-## Using with the NPM Package
+**Features**:
+- Configure multiple WordPress sites in one config
+- Each site has its own MCP server instance
+- Sites can be accessed independently in Claude
+
+**Example Setup**:
+- `wordpress-main-site`: Your main corporate website
+- `wordpress-blog`: Your company blog
+- `wordpress-shop`: Your e-commerce site
+
+**Usage**:
+1. Copy and modify the multi-site config file
+2. Replace the example URLs with your actual WordPress sites
+3. Add or remove sites as needed
+4. Each site needs a unique identifier (e.g., `wordpress-main-site`, `wordpress-blog`)
+
+**What both configurations enable**:
+- Search WordPress content
+- Access business information
+- View contact details
+- List services/products
+- Discover available endpoints
+
+## How to Use with NPM Package
+
+If you're using the `@abnerjezweb/wordpress-mcp-client` npm package:
 
 ```javascript
 const { WordPressMCPClient } = require('@abnerjezweb/wordpress-mcp-client');
 
-// Example: Using the simple configuration
+// Initialize client
 const client = new WordPressMCPClient({
-  baseUrl: 'https://your-domain.com',
-  apiPath: '/wp-json/llmready/v1/mcp'
+  baseUrl: 'https://your-domain.com/wp-json/llmr/mcp/v1'
 });
 
-// Make requests
-const response = await client.request('tools/list');
-console.log(response);
+// Use the client
+const business = await client.business();
+console.log(business);
+```
+
+## Prerequisites
+
+Before using these configurations:
+
+1. **WordPress Site**: Ensure you have a WordPress site accessible via HTTPS
+2. **LLM Ready Plugin**: Install and activate the LLM Ready plugin on your WordPress site
+3. **MCP Endpoints**: Verify endpoints are accessible at `/wp-json/llmr/mcp/v1/`
+
+## Testing Your Configuration
+
+Test if your WordPress MCP endpoints are working:
+
+```bash
+# Test discovery endpoint
+curl https://your-domain.com/wp-json/llmr/mcp/v1/discovery
+
+# Test business endpoint
+curl https://your-domain.com/wp-json/llmr/mcp/v1/business
 ```
 
 ## Need Help?
 
-- See the [WordPress MCP Client documentation](https://github.com/abnercalapiz/wordpress-mcp-client)
-- Check the [LLM Ready plugin documentation](https://your-domain.com/wp-admin/admin.php?page=llmready-mcp)
+- See the main [documentation](../../README.md)
+- Check the [MCP Client Setup Guide](../../MCP_CLIENT_SETUP_GUIDE.md)
+- Review [troubleshooting guide](../../docs/TROUBLESHOOTING.md)
+- Explore [usage examples](../../docs/EXAMPLES.md)
