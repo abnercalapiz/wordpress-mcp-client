@@ -464,11 +464,11 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-**Version**: 1.0.9  
+**Version**: 1.0.10  
 **Author**: Jezweb  
 **Website**: [https://www.jezweb.com.au/](https://www.jezweb.com.au/)
 
-## What's New in v1.0.9
+## What's New in v1.0.10
 
 - 🔧 **Manual Configuration Only** - Removed auto-add functionality for better reliability and user control
 - 📝 **Improved Documentation** - Cleaner examples using only working configurations
