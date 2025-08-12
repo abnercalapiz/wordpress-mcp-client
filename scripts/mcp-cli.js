@@ -4,6 +4,7 @@ const MCPConfigManager = require('./mcp-config-manager');
 const { program } = require('commander');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
+const { version } = require('../package.json');
 
 const manager = new MCPConfigManager();
 
@@ -11,7 +12,7 @@ const manager = new MCPConfigManager();
 program
   .name('mcp-site')
   .description('WordPress MCP Site Manager - Automatically add WordPress sites to MCP clients')
-  .version('1.0.0');
+  .version(version);
 
 // Add site command
 program
