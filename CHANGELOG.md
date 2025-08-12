@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2024-12-12
+
+### Fixed
+- Fixed `mcp-site add` not working properly with Claude Desktop
+- Changed configuration to use direct `wordpress-mcp-server` command instead of npx
+- Fixed "could not determine executable to run" error with npx
+- Updated list functionality to recognize the new command format
+
+### Changed
+- Claude Desktop configuration now uses `"command": "wordpress-mcp-server"` for better reliability
+- Roo Code configuration also updated to use direct command
+
 ## [1.0.8] - 2024-12-12
 
 ### Added

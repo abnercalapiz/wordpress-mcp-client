@@ -132,8 +132,8 @@ class MCPConfigManager {
 
     // Add the new site using the built-in MCP server
     config.mcpServers[`wordpress-${siteId}`] = {
-      command: "npx",
-      args: ["-y", "@abnerjezweb/wordpress-mcp-client", "serve", siteUrl]
+      command: "wordpress-mcp-server",
+      args: [siteUrl]
     };
 
     return this.writeConfig(configPath, config);
@@ -157,13 +157,8 @@ class MCPConfigManager {
     // Add the new site with local server configuration
     config['roo.mcpServers'][`wordpress-${siteId}`] = {
       type: "stdio",
-      command: "npx",
-      args: [
-        "-y",
-        "@abnerjezweb/wordpress-mcp-client",
-        "serve",
-        siteUrl
-      ],
+      command: "wordpress-mcp-server",
+      args: [siteUrl],
       name: siteName,
       description: `WordPress MCP connection to ${siteName}`
     };
@@ -293,7 +288,15 @@ class MCPConfigManager {
         Object.entries(config.mcpServers).forEach(([key, value]) => {
           if (key.startsWith('wordpress-')) {
             // Handle new format (direct URL in args)
-            if (value.args && value.args.includes('serve')) {
+            if (value.command === 'wordpress-mcp-server' && value.args && value.args.length > 0) {
+              sites.push({
+                id: key.replace('wordpress-', ''),
+                url: value.args[0],
+                key
+              });
+            }
+            // Handle npx format
+            else if (value.args && value.args.includes('serve')) {
               const urlIndex = value.args.indexOf('serve') + 1;
               if (urlIndex < value.args.length) {
                 sites.push({
