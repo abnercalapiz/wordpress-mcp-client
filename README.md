@@ -363,7 +363,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-**Version**: 1.0.3  
+**Version**: 1.0.4  
 **Author**: Jezweb  
 **Website**: [https://www.jezweb.com.au/](https://www.jezweb.com.au/)
 

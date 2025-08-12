@@ -3,7 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { WordPressMCPClient } = require('../dist/index');
+// Import from the package root - this works for both local dev and npm installs
+const { WordPressMCPClient } = require('../');
 
 /**
  * MCP Configuration Manager
