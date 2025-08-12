@@ -353,8 +353,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 ## Support
 
 - **Documentation**: See the `/docs` folder
-- **Issues**: [GitHub Issues](https://github.com/[your-repo]/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/[your-repo]/discussions)
+- **Issues**: [GitHub Issues](https://github.com/abnercalapiz/wordpress-mcp-client/issues)
 
 ## Acknowledgments
 
@@ -364,7 +363,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-**Version**: 1.0.2  
+**Version**: 1.0.3  
 **Author**: Jezweb  
 **Website**: [https://www.jezweb.com.au/](https://www.jezweb.com.au/)
 
