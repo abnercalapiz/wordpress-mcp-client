@@ -7,21 +7,7 @@
         "@modelcontextprotocol/server-fetch@latest"
       ],
       "env": {
-        "FETCH_CONFIG": {
-          "main": {
-            "baseUrl": "https://main-site.com/wp-json/llmr/mcp/v1",
-            "endpoints": {
-              "discovery": "/discovery",
-              "business": "/business",
-              "contact": "/contact",
-              "services": "/services",
-              "search": {
-                "path": "/search",
-                "method": "POST"
-              }
-            }
-          }
-        }
+        "FETCH_CONFIG": "{\"main\":{\"baseUrl\":\"https://main-site.com/wp-json/llmr/mcp/v1\",\"endpoints\":{\"discovery\":\"/discovery\",\"business\":\"/business\",\"contact\":\"/contact\",\"services\":\"/services\",\"search\":{\"path\":\"/search\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"}}}}}"
       }
     },
     "wordpress-blog": {
@@ -31,21 +17,7 @@
         "@modelcontextprotocol/server-fetch@latest"
       ],
       "env": {
-        "FETCH_CONFIG": {
-          "blog": {
-            "baseUrl": "https://blog.example.com/wp-json/llmr/mcp/v1",
-            "endpoints": {
-              "discovery": "/discovery",
-              "business": "/business",
-              "contact": "/contact",
-              "services": "/services",
-              "search": {
-                "path": "/search",
-                "method": "POST"
-              }
-            }
-          }
-        }
+        "FETCH_CONFIG": "{\"blog\":{\"baseUrl\":\"https://blog.example.com/wp-json/llmr/mcp/v1\",\"endpoints\":{\"discovery\":\"/discovery\",\"business\":\"/business\",\"contact\":\"/contact\",\"services\":\"/services\",\"search\":{\"path\":\"/search\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"}}}}}"
       }
     },
     "wordpress-shop": {
@@ -55,21 +27,7 @@
         "@modelcontextprotocol/server-fetch@latest"
       ],
       "env": {
-        "FETCH_CONFIG": {
-          "shop": {
-            "baseUrl": "https://shop.example.com/wp-json/llmr/mcp/v1",
-            "endpoints": {
-              "discovery": "/discovery",
-              "business": "/business",
-              "contact": "/contact",
-              "services": "/services",
-              "search": {
-                "path": "/search",
-                "method": "POST"
-              }
-            }
-          }
-        }
+        "FETCH_CONFIG": "{\"shop\":{\"baseUrl\":\"https://shop.example.com/wp-json/llmr/mcp/v1\",\"endpoints\":{\"discovery\":\"/discovery\",\"business\":\"/business\",\"contact\":\"/contact\",\"services\":\"/services\",\"search\":{\"path\":\"/search\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"}}}}}"
       }
     }
   }

@@ -145,7 +145,10 @@ class MCPConfigManager {
               services: "/services",
               search: {
                 path: "/search",
-                method: "POST"
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                }
               }
             }
           }

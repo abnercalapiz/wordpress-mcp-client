@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2024-12-12
+
+### Fixed
+- Fixed search not working in Claude Desktop due to missing Content-Type header
+- Fixed FETCH_CONFIG format in multisite example (must be JSON string, not object)
+- Updated all configuration examples to include proper headers for search endpoint
+- Fixed mcp-config-manager.js to generate correct search configuration
+
+### Added
+- Claude Desktop troubleshooting guide with detailed debugging steps
+- Alternative configuration examples for when standard MCP server isn't available
+- Working configuration example with proper JSON string format
+
+### Improved
+- All example configurations now consistently use JSON.stringify() for FETCH_CONFIG
+- Search endpoint configuration now includes required Content-Type header
+
 ## [1.0.5] - 2024-12-12
 
 ### Added

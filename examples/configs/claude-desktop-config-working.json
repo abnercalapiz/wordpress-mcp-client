@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "wordpress-site": {
+      "command": "node",
+      "args": [
+        "/path/to/wordpress-mcp-server.js"
+      ],
+      "env": {
+        "WORDPRESS_URL": "https://your-domain.com",
+        "MCP_ENDPOINT": "/wp-json/llmr/mcp/v1"
+      }
+    }
+  }
+}
